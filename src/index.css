@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-retro: 'Press Start 2P', monospace;
+    --font-crt: 'VT323', monospace;
+    --font-cyber: 'Chakra Petch', sans-serif;
+  }
+}
+
+.font-retro {
+  font-family: var(--font-retro);
+}
+
+.font-crt {
+  font-family: var(--font-crt);
+}
+
+.font-cyber {
+  font-family: var(--font-cyber);
+}
+
+/* CRT Scanline Effect */
+.crt-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.28) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.04),
+    rgba(0, 255, 0, 0.02),
+    rgba(0, 0, 255, 0.04)
+  );
+  background-size: 100% 3px, 4px 100%;
+  pointer-events: none;
+}
+
+/* CRT Screen Curvature & subtle vignette */
+.crt-vignette {
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 0, 0, 0.95);
+  pointer-events: none;
+}
+
+/* Screen Shake Keyframes & Utilities for Arcade High-Impact Events */
+@keyframes arcade-shake-intense {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-5px, 3px) rotate(-0.8deg); }
+  20% { transform: translate(6px, -4px) rotate(1deg); }
+  30% { transform: translate(-6px, -3px) rotate(-0.6deg); }
+  40% { transform: translate(5px, 4px) rotate(0.8deg); }
+  50% { transform: translate(-4px, 2px) rotate(-0.4deg); }
+  60% { transform: translate(4px, -3px) rotate(0.6deg); }
+  70% { transform: translate(-3px, 1px) rotate(-0.2deg); }
+  80% { transform: translate(3px, -1px) rotate(0.2deg); }
+  90% { transform: translate(-1px, 1px) rotate(0deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes arcade-shake-subtle {
+  0% { transform: translate(0, 0); }
+  15% { transform: translate(-3px, 2px); }
+  30% { transform: translate(3px, -2px); }
+  45% { transform: translate(-2px, -1px); }
+  60% { transform: translate(2px, 1px); }
+  75% { transform: translate(-1px, 1px); }
+  90% { transform: translate(1px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+.screen-shake-intense {
+  animation: arcade-shake-intense 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.screen-shake-subtle {
+  animation: arcade-shake-subtle 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes highscore-banner-pop {
+  0% { transform: scale(0.6) translateY(-20px); opacity: 0; }
+  50% { transform: scale(1.08) translateY(0); opacity: 1; }
+  70% { transform: scale(0.98); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-banner-pop {
+  animation: highscore-banner-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+/* Pixel rendering for retro canvases */
+.pixelated {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Neon glow text utilities */
+.glow-cyan {
+  text-shadow: 0 0 8px rgba(6, 182, 212, 0.8), 0 0 20px rgba(6, 182, 212, 0.4);
+}
+
+.glow-magenta {
+  text-shadow: 0 0 8px rgba(236, 72, 153, 0.8), 0 0 20px rgba(236, 72, 153, 0.4);
+}
+
+.glow-amber {
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.8), 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+.glow-green {
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.8), 0 0 20px rgba(34, 197, 94, 0.4);
+}
+
+/* Smooth custom scrollbars for arcade feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
