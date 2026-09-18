@@ -438,7 +438,6 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({
             <PixelAvatarView avatar={playerProfile.avatar} size="xs" showBorder={false} />
             <div className="flex items-center gap-1.5">
               <span className="text-[10px] font-retro text-amber-300 hidden sm:inline">{playerProfile.name}</span>
-              <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
               <span className="text-[9px] font-retro text-slate-500">FREE PLAY</span>
               <span className="hidden md:inline text-[8px] font-mono px-1.5 py-0.2 bg-black/40 text-slate-300 rounded border border-white/10">
                 {styleConfig.tag}

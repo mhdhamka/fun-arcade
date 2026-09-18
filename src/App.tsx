@@ -231,15 +231,40 @@ export default function App() {
             />
           </main>
 
-          <footer className="w-full border-t border-slate-800/80 py-6 px-4 text-center text-xs font-mono text-slate-500">
-            <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="font-retro text-[10px] text-cyan-400">ARCADEJS</span>
-                <span>// MODULAR RETRO PLATFORM</span>
+          <footer className="w-full relative mt-16 border-t border-slate-800/80 bg-slate-950/60 backdrop-blur-md py-8 px-6 text-xs font-mono text-slate-400 overflow-hidden">
+            {/* Ambient background glow */}
+            <div className="absolute inset-0 bg-gradient-to-t from-cyan-950/20 via-transparent to-transparent pointer-events-none" />
+
+            <div className="max-w-6xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+              
+              {/* Left Branding & Live Status */}
+              <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
+                <div className="flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-cyan-400 font-retro text-[10px] shadow-[0_0_12px_rgba(6,182,212,0.15)]">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>SYSTEM ONLINE</span>
+                </div>
+                <div>
+                  <span className="font-retro text-[11px] text-white tracking-wider">ARCADE<span className="text-cyan-400">JS</span></span>
+                  <span className="text-slate-500 ml-2">// MODULAR RETRO PLATFORM v1.0</span>
+                </div>
               </div>
-              <div>
-                <span>LOCAL-STORAGE PERSISTED // PROCEDURAL 8-BIT AUDIO</span>
+
+              {/* Center / Right Tech Spec Badges */}
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <span className="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-slate-300 shadow-sm hover:border-cyan-500/40 transition">
+                  LOCALSTORAGE PERSISTED
+                </span>
+                <span className="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[10px] text-slate-300 shadow-sm hover:border-cyan-500/40 transition">
+                  PROCEDURAL 8-BIT AUDIO
+                </span>
               </div>
+
+            </div>
+
+            {/* Bottom Sub-bar / Copyright */}
+            <div className="max-w-6xl mx-auto mt-6 pt-4 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-[10px] text-slate-600 gap-2">
+              <div>BUILT FOR RETRO GAMING ENTHUSIASTS © {new Date().getFullYear()}</div>
+              <div className="text-slate-500 font-retro tracking-widest">INSERT COIN TO START</div>
             </div>
           </footer>
         </>
