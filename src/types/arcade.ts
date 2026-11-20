@@ -1,6 +1,15 @@
 import React from 'react';
 
-export type GameId = 'snake' | 'flappy' | 'tetris' | 'invaders' | 'mario' | 'angrybirds';
+export type GameId =
+  | 'snake'
+  | 'flappy'
+  | 'tetris'
+  | 'invaders'
+  | 'mario'
+  | 'angrybirds'
+  | 'breakout'
+  | 'asteroids'
+  | 'regularshow';
 
 export type ThemeId = 'cyberpunk' | 'crt' | 'minimalist';
 
@@ -107,7 +116,10 @@ export type AchievementId =
   | 'sky_ace'
   | 'galaxy_savior'
   | 'mario_superstar'
-  | 'pig_destroyer';
+  | 'pig_destroyer'
+  | 'brick_breaker_pro'
+  | 'void_ace'
+  | 'regular_champion';
 
 export interface Achievement {
   id: AchievementId;

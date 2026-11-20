@@ -5,6 +5,9 @@ import { TetrisGame } from './tetris/TetrisGame';
 import { SpaceInvadersGame } from './invaders/SpaceInvadersGame';
 import { MarioGame } from './mario/MarioGame';
 import { AngryBirdsGame } from './angrybirds/AngryBirdsGame';
+import { BreakoutGame } from './breakout/BreakoutGame';
+import { AsteroidsGame } from './asteroids/AsteroidsGame';
+import { RegularShowGame } from './regularshow/RegularShowGame';
 
 import snakePoster from '../assets/images/snake_gameplay_poster_1789070139773.jpg';
 import flappyPoster from '../assets/images/flappy_gameplay_poster_1789070154602.jpg';
@@ -12,6 +15,9 @@ import tetrisPoster from '../assets/images/tetris_gameplay_poster_1789070166544.
 import invadersPoster from '../assets/images/invaders_gameplay_poster_1789070177790.jpg';
 import marioPoster from '../assets/images/mario_gameplay_poster_1789157825904.jpg';
 import angrybirdsPoster from '../assets/images/angrybirds_gameplay_poster_1789157837811.jpg';
+import breakoutPoster from '../assets/images/breakout_gameplay_poster_1795161862311.jpg';
+import asteroidsPoster from '../assets/images/asteroids_gameplay_poster_1795161862319.jpg';
+import regularCartPoster from '../assets/images/regular_cart_poster.svg';
 
 export const ARCADE_GAMES: GameModule[] = [
   {
@@ -158,6 +164,74 @@ export const ARCADE_GAMES: GameModule[] = [
       { key: 'P / ESC', action: 'Pause Game' },
     ],
     component: AngryBirdsGame,
+  },
+  {
+    id: 'breakout',
+    title: 'NEON BREAKER',
+    genre: 'BRICK BREAKER',
+    year: '1976',
+    description: 'Deflect the plasma orb off your energy paddle to shatter neon brick matrices, catch power capsules, and unleash twin turret lasers.',
+    accentColor: '#ec4899',
+    badgeBg: 'bg-pink-500/10 border-pink-500/30 text-pink-400',
+    posterUrl: breakoutPoster,
+    instructions: [
+      'Slide your paddle with Mouse/Touch or Left/Right keys to keep the ball in play',
+      'Catch falling capsules: W (Wide Paddle), M (Multi-Ball), L (Laser), +Life',
+      'Press Space or Click while Laser is active to fire twin turret bolts',
+      'Break armored steel bricks twice to clear each neon stage',
+    ],
+    controls: [
+      { key: 'MOUSE / ◄ ►', action: 'Move Paddle' },
+      { key: 'SPACE / CLICK', action: 'Launch / Fire Laser' },
+      { key: 'P / ESC', action: 'Pause Game' },
+    ],
+    component: BreakoutGame,
+  },
+  {
+    id: 'asteroids',
+    title: 'ASTRO BLASTER',
+    genre: 'VECTOR SHOOTER',
+    year: '1979',
+    description: 'Pilot a phosphor-vector delta starfighter through deep space, split drifting asteroids into shards, and outmaneuver hostile alien saucers.',
+    accentColor: '#22d3ee',
+    badgeBg: 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300',
+    posterUrl: asteroidsPoster,
+    instructions: [
+      'Rotate your starfighter and pulse thrusters to drift cleanly through asteroid belts',
+      'Split large boulders into smaller fragments and watch out for screen wrapping',
+      'Hunt down the Red Alien Saucer for +300 bonus points',
+      'Hit Shift / X for an emergency Hyperspace Warp when cornered',
+    ],
+    controls: [
+      { key: '◄ ► / A D', action: 'Rotate Ship' },
+      { key: '▲ / W', action: 'Thrusters' },
+      { key: 'SPACE / Z', action: 'Fire Plasma' },
+      { key: 'SHIFT / X', action: 'Hyperspace Warp' },
+    ],
+    component: AsteroidsGame,
+  },
+  {
+    id: 'regularshow',
+    title: 'REGULAR SHOW 3-IN-1',
+    genre: '3-IN-1 ACTION',
+    year: '2012',
+    description: 'Three classic Regular Show arcade sub-levels in one machine: Death Kwon Do street brawling in Put the Hurt on Him, golf-cart chasing in Escape from the Moon, and boss combat in Destroy the Destroyer!',
+    accentColor: '#facc15',
+    badgeBg: 'bg-amber-500/10 border-amber-500/30 text-amber-300',
+    posterUrl: regularCartPoster,
+    instructions: [
+      'Choose any of the 3 sub-levels on the SELECT GAME screen (click or press 1, 2, 3)',
+      'PUT THE HURT ON HIM: Punch/kick park thugs (Space) & unleash Death Chop (X) at 50% meter',
+      'ESCAPE FROM THE MOON: Drive the park golf cart, jump craters (Space), and hit Nitro (X)',
+      'DESTROY THE DESTROYER: Dodge sweeping beams, fire blasters (Space), and drop The Power Bomb (X)',
+    ],
+    controls: [
+      { key: '▲ ▼ ◄ ►', action: 'Move / Steer / Select' },
+      { key: 'SPACE / Z', action: 'Hit / Jump / Blaster' },
+      { key: 'SHIFT / X', action: 'Chop / Nitro / Bomb' },
+      { key: 'M', action: '3-in-1 Mode Select' },
+    ],
+    component: RegularShowGame,
   },
 ];
 

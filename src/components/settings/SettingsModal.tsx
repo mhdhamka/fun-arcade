@@ -11,10 +11,10 @@ import {
   CABINET_ART_STYLES,
   STICKER_CATALOG,
   StickerCatalogItem,
+  DEFAULT_CABINET_CUSTOMIZATION,
   cabinetService,
 } from '../../services/cabinetStyles';
 import { soundManager } from '../../services/audio';
-import { storageService } from '../../services/storage';
 import {
   X,
   Palette,
@@ -55,6 +55,8 @@ interface SettingsModalProps {
   onToggleSound: () => void;
   ambientSoundEnabled: boolean;
   onToggleAmbient: () => void;
+  masterVolume: number;
+  onMasterVolumeChange: (vol: number) => void;
   onClearData?: () => void;
 }
 
@@ -83,6 +85,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onToggleSound,
   ambientSoundEnabled,
   onToggleAmbient,
+  masterVolume,
+  onMasterVolumeChange,
   onClearData,
 }) => {
   const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
@@ -465,12 +469,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setTimeout(() => setSaveToast(false), 2400);
   };
 
-  // Reset to default
+  // Reset to factory default
   const handleResetCabinet = () => {
     playClick();
-    setCabinetConfig({
-      ...cabinetService.getCabinetCustomization(),
-    });
+    const factoryDefault: CabinetCustomizationState = {
+      ...DEFAULT_CABINET_CUSTOMIZATION,
+      stickers: [...DEFAULT_CABINET_CUSTOMIZATION.stickers],
+    };
+    setCabinetConfig(factoryDefault);
+    cabinetService.saveCabinetCustomization(factoryDefault);
+    onSaveCabinetConfig(factoryDefault);
+    setSaveToast(true);
+    setTimeout(() => setSaveToast(false), 2400);
   };
 
   // Filtered sticker catalog
@@ -794,7 +804,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           </span>
                         </div>
                         <div className="grid grid-cols-3 gap-1.5">
-                          {(['clean', 'authentic', 'heavy'] as const).map((wear) => (
+                          {(['clean', 'authentic', 'patina'] as const).map((wear) => (
                             <button
                               key={wear}
                               type="button"
@@ -1431,6 +1441,30 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
               </div>
 
+              {/* Master Volume Slider */}
+              <div className="p-4 bg-slate-950/70 border border-slate-800 rounded-xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-retro text-slate-200 block">MASTER OUTPUT GAIN</span>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      Scales both 8-bit game SFX and arcade hall ambience
+                    </span>
+                  </div>
+                  <span className="text-sm font-retro text-cyan-300 tabular-nums">
+                    {Math.round(masterVolume * 100)}%
+                  </span>
+                </div>
+                <input
+                  id="slider-master-volume"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={Math.round(masterVolume * 100)}
+                  onChange={(e) => onMasterVolumeChange(parseInt(e.target.value, 10) / 100)}
+                  className="w-full accent-cyan-400 cursor-pointer"
+                />
+              </div>
+
               {/* Sound Test Panel */}
               <div className="p-4 bg-slate-950/50 border border-slate-800 rounded-xl space-y-3">
                 <span className="text-xs font-retro text-slate-300 block">AUDIO TEST BENCH:</span>
@@ -1438,14 +1472,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   {[
                     { id: 'coin', label: 'INSERT COIN' },
                     { id: 'laser', label: 'LASER FIRE' },
-                    { id: 'explosion', label: 'EXPLOSION' },
+                    { id: 'hit', label: 'EXPLOSION' },
                     { id: 'fanfare', label: 'WIN FANFARE' },
                   ].map((testSfx) => (
                     <button
                       key={testSfx.id}
                       type="button"
                       onClick={() => soundManager.play(testSfx.id as any)}
-                      className="px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-cyan-300 rounded-lg text-xs font-retro transition cursor-pointer"
+                      className="px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-cyan-300 rounded-lg text-xs font-retro transition cursor-pointer whitespace-nowrap"
                     >
                       {testSfx.label}
                     </button>
@@ -1627,12 +1661,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </div>
                     <button
                       type="button"
-                      onClick={() => {
-                        if (confirm('Are you sure you want to clear all high scores and game history?')) {
-                          onClearData();
-                        }
-                      }}
-                      className="px-3 py-1.5 bg-rose-950 hover:bg-rose-900 border border-rose-600 text-rose-300 rounded-lg text-xs font-retro transition cursor-pointer"
+                      onClick={onClearData}
+                      className="px-3 py-1.5 bg-rose-950 hover:bg-rose-900 border border-rose-600 text-rose-300 rounded-lg text-xs font-retro transition cursor-pointer whitespace-nowrap"
                     >
                       CLEAR SCORES
                     </button>

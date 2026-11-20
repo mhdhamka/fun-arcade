@@ -13,6 +13,7 @@ import {
   SlidersHorizontal,
   ChevronDown,
   X,
+  BookOpen,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -29,6 +30,7 @@ interface NavbarProps {
   onOpenProfile?: () => void;
   onOpenCabinetCustomizer?: () => void;
   onOpenSettings?: () => void;
+  onOpenReadme?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -45,6 +47,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenProfile,
   onOpenCabinetCustomizer,
   onOpenSettings,
+  onOpenReadme,
 }) => {
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -131,10 +134,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="button"
               onClick={onOpenSettings}
               title="Open Arcade System Settings"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-700 hover:border-amber-500/70 text-slate-300 hover:text-amber-300 text-xs font-mono transition cursor-pointer shadow-sm"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-700 hover:border-amber-500/70 text-slate-300 hover:text-amber-300 text-xs font-mono transition cursor-pointer shadow-sm whitespace-nowrap"
             >
-              <Settings className="w-3.5 h-3.5 text-amber-400 animate-spin-slow" />
+              <Settings className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span className="hidden md:inline font-retro text-[9px]">SETTINGS</span>
+            </button>
+          )}
+
+          {/* Operator Manual / Interactive README Button */}
+          {onOpenReadme && (
+            <button
+              id="btn-nav-manual"
+              type="button"
+              onClick={onOpenReadme}
+              title="Open Interactive Arcade Manual & README"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-cyan-950/60 border border-cyan-600/60 hover:border-cyan-400 text-cyan-300 hover:text-cyan-200 text-xs font-mono transition cursor-pointer shadow-sm whitespace-nowrap"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <span className="hidden lg:inline font-retro text-[9px]">MANUAL</span>
             </button>
           )}
 
@@ -145,13 +162,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="button"
               onClick={() => setQuickMenuOpen(!quickMenuOpen)}
               title="Toggle System Toggles & Customization"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono transition cursor-pointer shadow-sm ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono transition cursor-pointer shadow-sm whitespace-nowrap ${
                 quickMenuOpen
                   ? 'bg-cyan-950 border-cyan-500 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
                   : 'bg-slate-950 border-slate-700 hover:border-slate-500 text-slate-300'
               }`}
             >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
+              <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
               <span className="font-retro text-[9px]">SYSTEM</span>
               <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${quickMenuOpen ? 'rotate-180' : ''}`} />
             </button>

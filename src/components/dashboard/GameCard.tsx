@@ -74,7 +74,7 @@ export const GameCard: React.FC<GameCardProps> = ({
             <Trophy className="w-3.5 h-3.5 text-amber-400" />
             <span>RECORD:</span>
           </div>
-          <span className="text-amber-400 font-bold tracking-wider">
+          <span className="text-amber-400 font-bold tracking-wider tabular-nums">
             {highScore.toLocaleString()} PTS
           </span>
         </div>
@@ -84,9 +84,9 @@ export const GameCard: React.FC<GameCardProps> = ({
             id={`btn-launch-${game.id}`}
             type="button"
             onClick={() => onLaunch(game)}
-            className="flex-1 py-2.5 px-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-98 text-white font-retro text-xs rounded-lg border border-cyan-400/40 transition shadow-[0_0_15px_rgba(6,182,212,0.3)] flex items-center justify-center gap-2 cursor-pointer"
+            className="flex-1 py-2.5 px-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 active:scale-98 text-white font-retro text-xs rounded-lg border border-cyan-400/40 transition shadow-[0_0_15px_rgba(6,182,212,0.3)] flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
           >
-            <Play className="w-3.5 h-3.5 fill-current" />
+            <Play className="w-3.5 h-3.5 fill-current shrink-0" />
             <span>INSERT COIN</span>
           </button>
 

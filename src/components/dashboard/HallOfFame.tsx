@@ -70,7 +70,7 @@ export const HallOfFame: React.FC<HallOfFameProps> = ({
         <div className="flex items-center gap-2">
           <Award className="w-5 h-5 text-amber-400" />
           <h2 className="text-sm font-retro text-amber-400 glow-amber tracking-wide">
-            HALL OF FAME // GLOBAL LEADERBOARDS
+            HALL OF FAME
           </h2>
         </div>
 
@@ -176,7 +176,7 @@ export const HallOfFame: React.FC<HallOfFameProps> = ({
                   key={entry.id}
                   className={`flex items-center justify-between p-3 transition ${
                     entry.isCurrentPlayer
-                      ? 'bg-cyan-950/40 border-l-4 border-l-cyan-400'
+                      ? 'bg-cyan-950/40 ring-1 ring-inset ring-cyan-500/40'
                       : 'hover:bg-slate-900/50'
                   }`}
                 >
@@ -225,7 +225,7 @@ export const HallOfFame: React.FC<HallOfFameProps> = ({
                       {gameObj?.title || entry.gameId}
                     </span>
 
-                    <div className="font-retro text-sm text-amber-300 font-bold whitespace-nowrap">
+                    <div className="font-retro text-sm text-amber-300 font-bold whitespace-nowrap tabular-nums">
                       {entry.score.toLocaleString()}{' '}
                       <span className="text-[9px] text-amber-500 font-mono">PTS</span>
                     </div>
@@ -238,19 +238,19 @@ export const HallOfFame: React.FC<HallOfFameProps> = ({
       </div>
 
       {/* Grid of high scores per game */}
-      <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {ARCADE_GAMES.map((game) => {
           const score = highScores[game.id] || 0;
           return (
             <div
               key={game.id}
-              className="bg-slate-950/80 border border-slate-800/90 rounded-lg p-2.5 flex flex-col justify-between"
+              className="bg-slate-950/80 border border-slate-800/90 rounded-lg p-3 flex flex-col justify-between"
             >
               <div className="text-[9px] font-retro text-slate-400 truncate mb-1">
                 {game.title}
               </div>
               <div
-                className="text-sm font-retro font-bold tracking-wider"
+                className="text-sm font-retro font-bold tracking-wider tabular-nums"
                 style={{
                   color: game.accentColor,
                   textShadow: `0 0 10px ${game.accentColor}55`,
@@ -298,7 +298,7 @@ export const HallOfFame: React.FC<HallOfFameProps> = ({
                     </span>
                     <span className="text-[9px] text-slate-500">[{rec.date}]</span>
                   </div>
-                  <div className="font-retro text-xs text-amber-300 font-bold whitespace-nowrap">
+                  <div className="font-retro text-xs text-amber-300 font-bold whitespace-nowrap tabular-nums">
                     {rec.score.toLocaleString()} PTS
                   </div>
                 </div>

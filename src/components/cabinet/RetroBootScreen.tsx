@@ -36,6 +36,9 @@ const CARTRIDGE_SPECS: Record<string, { romSize: string; chip: string; mapper: s
   invaders: { romSize: '128 KB ROM', chip: 'ARC-8080-RGB', mapper: 'MAPPER-00', crc: '0x4E89F1' },
   mario: { romSize: '512 KB ROM', chip: 'ARC-RICOH-2A03', mapper: 'MMC-5A', crc: '0xFA9033' },
   angrybirds: { romSize: '384 KB ROM', chip: 'ARC-ARM-V4', mapper: 'MAPPER-04', crc: '0x1C765D' },
+  breakout: { romSize: '192 KB ROM', chip: 'ARC-Z80-PRO', mapper: 'MAPPER-02', crc: '0x6B41E8' },
+  asteroids: { romSize: '256 KB ROM', chip: 'ARC-DVG-VEC', mapper: 'VECTOR-01', crc: '0x9D20C7' },
+  regularshow: { romSize: '768 KB 3-IN-1', chip: 'ARC-TRIPLE-90', mapper: 'MULTI-CART', crc: '0x3A91F4' },
 };
 
 export const RetroBootScreen: React.FC<RetroBootScreenProps> = ({
@@ -112,7 +115,7 @@ export const RetroBootScreen: React.FC<RetroBootScreenProps> = ({
         delay: baseDelay * 0.5,
         pct: 8,
         step: 'HARDWARE INITIALIZATION (POST)...',
-        log: { text: 'SYSTEM BIOS v2.4 (C) 1984 ARCADEJS CORP', status: 'info' },
+        log: { text: 'SYSTEM BIOS v2.4 (C) 1984 FUN ARCADE CORP', status: 'info' },
         hex: '0x0800',
         sfx: 'select',
       },
@@ -248,9 +251,9 @@ export const RetroBootScreen: React.FC<RetroBootScreenProps> = ({
       {/* Top Banner: Retro BIOS & Hardware Header */}
       <div className="relative z-10 border-b border-slate-800 pb-2.5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Terminal className="w-4 h-4 text-emerald-400 animate-pulse" />
+          <Terminal className="w-4 h-4 text-emerald-400" />
           <span className="font-retro text-[10px] sm:text-xs text-emerald-400 tracking-wider">
-            ARCADE HARDWARE SYSTEM // BOOT ROM v2.4
+            ARCADE HARDWARE SYSTEM · BOOT ROM v2.4
           </span>
         </div>
 

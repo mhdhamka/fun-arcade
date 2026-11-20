@@ -15,17 +15,17 @@ export const GameVideoPreview: React.FC<GameVideoPreviewProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [playbackProgress, setPlaybackProgress] = useState(0);
+
+  const hasVideo = Boolean((game.previewWebmUrl || game.previewVideoUrl) && !hasError);
 
   // Play/pause based on hover state
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !hasVideo) return;
 
-    if (isCardHovered && !hasError) {
-      // Play video
+    if (isCardHovered) {
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise
@@ -33,16 +33,14 @@ export const GameVideoPreview: React.FC<GameVideoPreviewProps> = ({
             setIsPlaying(true);
           })
           .catch(() => {
-            // Autoplay policy or interrupted
             setIsPlaying(false);
           });
       }
     } else {
-      // Pause and reset gently
       video.pause();
       setIsPlaying(false);
     }
-  }, [isCardHovered, hasError]);
+  }, [isCardHovered, hasVideo]);
 
   const handleTimeUpdate = () => {
     if (!videoRef.current) return;
@@ -64,14 +62,18 @@ export const GameVideoPreview: React.FC<GameVideoPreviewProps> = ({
           src={game.posterUrl}
           alt={`${game.title} preview`}
           referrerPolicy="no-referrer"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-            isPlaying ? 'opacity-0' : 'opacity-80 group-hover:opacity-40'
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-300 ${
+            isPlaying
+              ? 'opacity-0'
+              : hasVideo
+                ? 'opacity-85 group-hover/video:opacity-50'
+                : 'opacity-85 group-hover/video:opacity-100 group-hover/video:scale-105'
           }`}
         />
       )}
 
       {/* 2. Video Player */}
-      {(game.previewWebmUrl || game.previewVideoUrl) && !hasError && (
+      {hasVideo && (
         <video
           ref={videoRef}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
@@ -81,7 +83,6 @@ export const GameVideoPreview: React.FC<GameVideoPreviewProps> = ({
           loop
           playsInline
           preload="metadata"
-          onLoadedData={() => setVideoLoaded(true)}
           onTimeUpdate={handleTimeUpdate}
           onError={() => setHasError(true)}
         >
@@ -96,22 +97,26 @@ export const GameVideoPreview: React.FC<GameVideoPreviewProps> = ({
       {/* 4. Subtle Vignette Border */}
       <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] pointer-events-none" />
 
-      {/* 5. Live HUD Indicator (shown on hover) */}
+      {/* 5. Live HUD Indicator */}
       <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 pointer-events-none">
         {isPlaying ? (
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-black/75 border border-red-500/40 text-[9px] font-retro text-red-400 backdrop-blur-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
             <span>REC DEMO</span>
           </div>
-        ) : (
-          <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/60 border border-slate-700/60 text-[9px] font-retro text-slate-400 opacity-80 group-hover:opacity-100 transition">
+        ) : hasVideo ? (
+          <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/65 border border-slate-700/60 text-[9px] font-retro text-slate-300 opacity-85 group-hover/video:opacity-100 transition">
             <Film className="w-2.5 h-2.5 text-cyan-400" />
             <span>PREVIEW</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/65 border border-cyan-500/40 text-[9px] font-retro text-cyan-300">
+            <span>READY</span>
           </div>
         )}
       </div>
 
-      {/* 6. FPS / Format badge top-right */}
+      {/* 6. FPS badge top-right */}
       <div className="absolute top-2 right-2 z-10 pointer-events-none">
         <span className="text-[8px] font-mono px-1.5 py-0.5 rounded bg-slate-950/80 border border-slate-800 text-cyan-300">
           60 FPS
@@ -139,8 +144,8 @@ export const GameVideoPreview: React.FC<GameVideoPreviewProps> = ({
 
       {/* 9. Hover hint overlay */}
       <div className="absolute bottom-1.5 right-2 z-10 pointer-events-none">
-        <span className="text-[8px] font-retro text-white/70 drop-shadow">
-          {isPlaying ? 'PLAYING GAMEPLAY' : 'HOVER TO PREVIEW'}
+        <span className="text-[8px] font-retro text-white/75 drop-shadow">
+          {isPlaying ? 'PLAYING DEMO' : hasVideo ? 'HOVER TO PREVIEW' : 'CLICK TO PLAY'}
         </span>
       </div>
     </div>

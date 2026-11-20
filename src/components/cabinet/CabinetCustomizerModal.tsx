@@ -414,7 +414,7 @@ export const CabinetCustomizerModal: React.FC<CabinetCustomizerModalProps> = ({
               >
                 <div className="flex items-center gap-1 text-white">
                   <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                  <span>ARCADE JS</span>
+                  <span>FUN ARCADE</span>
                 </div>
                 <span className="text-amber-400 font-mono text-[9px] px-1.5 py-0.5 bg-black/40 rounded">
                   {currentStyleConfig.tag}

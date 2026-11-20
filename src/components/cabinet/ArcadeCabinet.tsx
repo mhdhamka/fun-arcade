@@ -32,6 +32,7 @@ import {
   Trophy,
   Cpu,
   Settings,
+  Palette,
 } from 'lucide-react';
 import { RetroBootScreen } from './RetroBootScreen';
 
@@ -141,7 +142,7 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({
     });
   }, []);
 
-  // Keyboard pause listener
+  // Keyboard pause listener & auto-pause when tab loses focus
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.key === 'p' || e.key === 'P' || e.key === 'Escape') && !isGameOver) {
@@ -153,9 +154,18 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({
         e.preventDefault();
       }
     };
+    const handleVisibilityChange = () => {
+      if (document.hidden && !isBooting && !isGameOver) {
+        setIsPaused(true);
+      }
+    };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isGameOver, playSfx]);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isBooting, isGameOver, playSfx]);
 
   const handleScoreChange = useCallback(
     (newScore: number) => {
@@ -390,6 +400,7 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({
               title="Customize Physical Cabinet & Sticker Decals"
               className="p-1.5 bg-gradient-to-r from-purple-900/80 to-indigo-900/80 hover:from-purple-800 hover:to-indigo-800 border border-purple-600/70 text-purple-300 hover:text-purple-200 rounded text-xs transition cursor-pointer shadow-[0_0_10px_rgba(168,85,247,0.25)]"
             >
+              <Palette className="w-4 h-4" />
             </button>
           )}
 
@@ -445,15 +456,15 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-6 font-retro text-xs">
+          <div className="flex items-center gap-6 font-retro text-xs tabular-nums">
             <div className="flex items-center gap-1.5">
               <span className="text-slate-500 text-[10px]">SCORE:</span>
-              <span className="text-white font-bold tracking-wider">{score}</span>
+              <span className="text-white font-bold tracking-wider">{score.toLocaleString()}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Trophy className="w-3 h-3 text-amber-400" />
               <span className="text-slate-500 text-[10px]">HI:</span>
-              <span className="text-amber-400 font-bold tracking-wider">{highScore}</span>
+              <span className="text-amber-400 font-bold tracking-wider">{highScore.toLocaleString()}</span>
             </div>
           </div>
 
@@ -702,7 +713,7 @@ export const ArcadeCabinet: React.FC<ArcadeCabinetProps> = ({
 
       {/* Footer Branding */}
       <footer className="w-full max-w-2xl text-center py-2 text-[10px] font-mono text-slate-500">
-        ARCADEJS SHELL // EMULATION CORE v1.0 // {game.title}
+        FUN ARCADE SHELL · {game.title}
       </footer>
     </div>
   );

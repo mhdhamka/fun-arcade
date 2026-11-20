@@ -7,7 +7,6 @@ import { HallOfFame } from './HallOfFame';
 import { GameDetailsModal } from './GameDetailsModal';
 import {
   Gamepad2,
-  Sparkles,
   Zap,
   ShieldCheck,
   Flame,
@@ -17,6 +16,9 @@ import {
   RotateCcw,
   ChevronLeft,
   ChevronRight,
+  LayoutGrid,
+  GalleryHorizontal,
+  BookOpen,
 } from 'lucide-react';
 
 interface ArcadeLauncherProps {
@@ -28,6 +30,7 @@ interface ArcadeLauncherProps {
   onOpenProfileModal?: () => void;
   onOpenCabinetCustomizer?: () => void;
   onOpenSettings?: () => void;
+  onOpenReadme?: () => void;
 }
 
 export const ArcadeLauncher: React.FC<ArcadeLauncherProps> = ({
@@ -39,11 +42,13 @@ export const ArcadeLauncher: React.FC<ArcadeLauncherProps> = ({
   onOpenProfileModal,
   onOpenCabinetCustomizer,
   onOpenSettings,
+  onOpenReadme,
 }) => {
   const [selectedGameForModal, setSelectedGameForModal] = useState<GameModule | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  
+  const [viewMode, setViewMode] = useState<'grid' | 'carousel'>('grid');
+
   // Carousel scroll reference container
   const carouselRef = React.useRef<HTMLDivElement>(null);
 
@@ -91,26 +96,25 @@ export const ArcadeLauncher: React.FC<ArcadeLauncherProps> = ({
 
         <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="space-y-4 text-center lg:text-left max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-cyan-300 font-retro text-[10px] shadow-[0_0_10px_rgba(6,182,212,0.2)]">
-              <Sparkles className="w-3 h-3 text-cyan-400" />
-              <span>INSERT COIN // PLAY RETRO CLASSICS</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-lg text-cyan-300 font-retro text-[10px]">
+              <span>RETRO ARCADE COLLECTION</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-retro text-white tracking-wider leading-tight">
-              ARCADE<span className="text-cyan-400 glow-cyan">JS</span> CABINET
+              FUN <span className="text-cyan-400 glow-cyan">ARCADE</span>
             </h1>
 
             <p className="text-sm text-slate-300 font-sans leading-relaxed">
               Experience handcrafted pixel-accurate reproductions of timeless mini-games. Built with
-              HTML5 Canvas, procedural 8-bit Web Audio synthesis, and zero external asset dependencies.
+              HTML5 Canvas, procedural 8-bit Web Audio synthesis, and zero external dependencies.
             </p>
 
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2 font-mono text-xs text-slate-400">
-              <div className="flex items-center gap-1.5 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 shadow-sm">
+              <div className="flex items-center gap-1.5 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 shadow-sm tabular-nums">
                 <Gamepad2 className="w-4 h-4 text-cyan-400" />
                 <span>{ARCADE_GAMES.length} CLASSIC CORES</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 shadow-sm">
+              <div className="flex items-center gap-1.5 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 shadow-sm tabular-nums">
                 <Flame className="w-4 h-4 text-amber-400" />
                 <span className="text-amber-300 font-bold">
                   {totalScorePoints.toLocaleString()} TOTAL HIGH PTS
@@ -118,7 +122,7 @@ export const ArcadeLauncher: React.FC<ArcadeLauncherProps> = ({
               </div>
               <div className="flex items-center gap-1.5 bg-slate-950/90 px-3 py-1.5 rounded-xl border border-slate-800 shadow-sm">
                 <Zap className="w-4 h-4 text-emerald-400" />
-                <span>60 FPS SMOOTH</span>
+                <span>60 FPS NATIVE</span>
               </div>
             </div>
           </div>
@@ -126,8 +130,8 @@ export const ArcadeLauncher: React.FC<ArcadeLauncherProps> = ({
           <div className="flex flex-col items-center justify-center p-5 bg-slate-950/90 border border-slate-800 rounded-2xl shadow-xl shrink-0 w-full sm:w-auto">
             <div className="w-40 h-28 bg-slate-900 border border-cyan-500/40 rounded-xl p-3 flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
               <div className="absolute inset-0 crt-overlay opacity-50 pointer-events-none" />
-              <Gamepad2 className="w-8 h-8 text-cyan-400 mb-1.5 animate-bounce" />
-              <span className="text-[10px] font-retro text-cyan-300 glow-cyan tracking-widest">READY 2 PLAY</span>
+              <Gamepad2 className="w-8 h-8 text-cyan-400 mb-1.5" />
+              <span className="text-[10px] font-retro text-cyan-300 glow-cyan tracking-widest">READY TO PLAY</span>
             </div>
             
             <div className="flex items-center gap-2 mt-3 w-full">
@@ -136,9 +140,8 @@ export const ArcadeLauncher: React.FC<ArcadeLauncherProps> = ({
                   id="btn-launcher-open-customizer"
                   type="button"
                   onClick={onOpenCabinetCustomizer}
-                  className="flex-1 px-3 py-2 bg-gradient-to-r from-purple-950 to-indigo-950 hover:from-purple-900 hover:to-indigo-900 border border-purple-600/60 text-purple-200 hover:text-white rounded-xl text-[9px] font-retro transition shadow cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 px-3 py-2 bg-gradient-to-r from-purple-950 to-indigo-950 hover:from-purple-900 hover:to-indigo-900 border border-purple-600/60 text-purple-200 hover:text-white rounded-xl text-[9px] font-retro transition shadow cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap"
                 >
-                  <Sparkles className="w-3 h-3 text-purple-400" />
                   <span>CABINET</span>
                 </button>
               )}
@@ -147,14 +150,25 @@ export const ArcadeLauncher: React.FC<ArcadeLauncherProps> = ({
                   id="btn-launcher-open-settings"
                   type="button"
                   onClick={onOpenSettings}
-                  className="flex-1 px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-amber-500/70 text-slate-300 hover:text-amber-300 rounded-xl text-[9px] font-retro transition shadow cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-amber-500/70 text-slate-300 hover:text-amber-300 rounded-xl text-[9px] font-retro transition shadow cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap"
                 >
-                  <Settings className="w-3 h-3 text-amber-400" />
+                  <Settings className="w-3 h-3 text-amber-400 shrink-0" />
                   <span>SETTINGS</span>
                 </button>
               )}
             </div>
-            <div className="text-[9px] font-retro text-slate-500 mt-2 tracking-wider">CREDIT: 🅲 01 / 99</div>
+            {onOpenReadme && (
+              <button
+                id="btn-launcher-open-manual"
+                type="button"
+                onClick={onOpenReadme}
+                className="w-full mt-2 px-3 py-2 bg-cyan-950/70 hover:bg-cyan-900/70 border border-cyan-600/60 hover:border-cyan-400 text-cyan-200 hover:text-white rounded-xl text-[9px] font-retro transition shadow cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap"
+              >
+                <BookOpen className="w-3 h-3 text-cyan-400 shrink-0" />
+                <span>OPERATOR MANUAL / README</span>
+              </button>
+            )}
+            <div className="text-[9px] font-retro text-slate-500 mt-2 tracking-wider tabular-nums">CREDIT: 01 / 99</div>
           </div>
         </div>
       </div>
@@ -165,18 +179,18 @@ export const ArcadeLauncher: React.FC<ArcadeLauncherProps> = ({
           <div>
             <h2 className="text-lg font-retro text-white tracking-wide flex items-center gap-2">
               <span>SELECT YOUR CARTRIDGE</span>
-              <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300">
+              <span className="text-xs font-mono px-2 py-0.5 rounded-md bg-cyan-950 border border-cyan-800 text-cyan-300 tabular-nums">
                 {filteredGames.length} available
               </span>
             </h2>
             <span className="text-xs font-mono text-slate-400">
-              BROWSE CORES OR FILTER BY GENRE & KEYWORD
+              Browse cores or filter by genre & keyword
             </span>
           </div>
 
           <div className="flex items-center gap-3 w-full md:w-auto">
             {/* Real-time Search Box */}
-            <div className="relative w-full md:w-72">
+            <div className="relative w-full md:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
               <input
                 type="text"
@@ -187,31 +201,66 @@ export const ArcadeLauncher: React.FC<ArcadeLauncherProps> = ({
               />
               {searchQuery && (
                 <button
+                  type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-500 hover:text-slate-300 bg-slate-900 px-1.5 py-0.5 rounded"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-500 hover:text-slate-300 bg-slate-900 px-1.5 py-0.5 rounded cursor-pointer"
                 >
                   Clear
                 </button>
               )}
             </div>
 
-            {/* Carousel Navigation Buttons */}
-            <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+            {/* Grid / Carousel View Switcher */}
+            <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl p-1 shrink-0">
               <button
-                onClick={() => scrollCarousel('left')}
-                className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/50 text-slate-300 rounded-xl transition cursor-pointer"
-                title="Scroll Left"
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`p-1.5 rounded-lg transition cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-cyan-500 text-slate-950 shadow'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title="Grid View"
+                aria-label="Grid View"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <LayoutGrid className="w-4 h-4" />
               </button>
               <button
-                onClick={() => scrollCarousel('right')}
-                className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/50 text-slate-300 rounded-xl transition cursor-pointer"
-                title="Scroll Right"
+                type="button"
+                onClick={() => setViewMode('carousel')}
+                className={`p-1.5 rounded-lg transition cursor-pointer ${
+                  viewMode === 'carousel'
+                    ? 'bg-cyan-500 text-slate-950 shadow'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title="Carousel View"
+                aria-label="Carousel View"
               >
-                <ChevronRight className="w-4 h-4" />
+                <GalleryHorizontal className="w-4 h-4" />
               </button>
             </div>
+
+            {/* Carousel Navigation Buttons */}
+            {viewMode === 'carousel' && (
+              <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => scrollCarousel('left')}
+                  className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/50 text-slate-300 rounded-xl transition cursor-pointer"
+                  title="Scroll Left"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollCarousel('right')}
+                  className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/50 text-slate-300 rounded-xl transition cursor-pointer"
+                  title="Scroll Right"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -236,40 +285,56 @@ export const ArcadeLauncher: React.FC<ArcadeLauncherProps> = ({
         </div>
       </div>
 
-      {/* Game Cards Carousel View or Empty State */}
+      {/* Game Cards Grid / Carousel View or Empty State */}
       {filteredGames.length > 0 ? (
-        <div className="relative group">
-          {/* Mobile/Edge Carousel Scroll Buttons */}
-          <button
-            onClick={() => scrollCarousel('left')}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-slate-900 border border-slate-700 text-cyan-400 flex items-center justify-center shadow-xl opacity-80 hover:opacity-100 hover:scale-110 transition cursor-pointer hidden sm:flex"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => scrollCarousel('right')}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-slate-900 border border-slate-700 text-cyan-400 flex items-center justify-center shadow-xl opacity-80 hover:opacity-100 hover:scale-110 transition cursor-pointer hidden sm:flex"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-
-          {/* Carousel Track Container (Scrollbar completely hidden) */}
-          <div
-            ref={carouselRef}
-            className="flex gap-5 overflow-x-auto snap-x snap-mandatory pb-4 pt-1 scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-          >
+        viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {filteredGames.map((game) => (
-              <div key={game.id} className="w-[300px] sm:w-[320px] shrink-0 snap-start">
-                <GameCard
-                  game={game}
-                  highScore={highScores[game.id] || 0}
-                  onLaunch={onLaunchGame}
-                  onShowDetails={setSelectedGameForModal}
-                />
-              </div>
+              <GameCard
+                key={game.id}
+                game={game}
+                highScore={highScores[game.id] || 0}
+                onLaunch={onLaunchGame}
+                onShowDetails={setSelectedGameForModal}
+              />
             ))}
           </div>
-        </div>
+        ) : (
+          <div className="relative group">
+            {/* Mobile/Edge Carousel Scroll Buttons */}
+            <button
+              type="button"
+              onClick={() => scrollCarousel('left')}
+              className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-slate-900 border border-slate-700 text-cyan-400 flex items-center justify-center shadow-xl opacity-80 hover:opacity-100 hover:scale-110 transition cursor-pointer hidden sm:flex"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollCarousel('right')}
+              className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-slate-900 border border-slate-700 text-cyan-400 flex items-center justify-center shadow-xl opacity-80 hover:opacity-100 hover:scale-110 transition cursor-pointer hidden sm:flex"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
+            {/* Carousel Track Container (Scrollbar completely hidden) */}
+            <div
+              ref={carouselRef}
+              className="flex gap-5 overflow-x-auto snap-x snap-mandatory pb-4 pt-1 scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            >
+              {filteredGames.map((game) => (
+                <div key={game.id} className="w-[300px] sm:w-[320px] shrink-0 snap-start">
+                  <GameCard
+                    game={game}
+                    highScore={highScores[game.id] || 0}
+                    onLaunch={onLaunchGame}
+                    onShowDetails={setSelectedGameForModal}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )
       ) : (
         <div className="flex flex-col items-center justify-center py-16 bg-slate-900/40 border border-slate-800 rounded-2xl text-center space-y-3">
           <div className="w-12 h-12 rounded-full bg-slate-950 border border-slate-800 flex items-center justify-center text-slate-500">

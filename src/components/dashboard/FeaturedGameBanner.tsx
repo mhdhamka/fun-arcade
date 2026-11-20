@@ -73,6 +73,27 @@ const WEEKLY_HIGHLIGHTS: Record<GameId, WeeklyHighlightData> = {
     heroTag: 'SLINGSHOT SNIPER',
     badgeColor: 'text-orange-400 border-orange-500/40 bg-orange-950/60',
   },
+  breakout: {
+    weeklyChallenge: 'Chain brick combos and clear Stage 2 with Laser & Multi-Ball capsules',
+    targetScore: 1500,
+    perk: 'Twin Turret Laser Matrix Ready',
+    heroTag: 'BRICK ARCHITECT',
+    badgeColor: 'text-pink-400 border-pink-500/40 bg-pink-950/60',
+  },
+  asteroids: {
+    weeklyChallenge: 'Survive Sector Wave 3 and intercept a Red Alien Saucer',
+    targetScore: 2000,
+    perk: 'Emergency Hyperspace Warp Charged',
+    heroTag: 'VECTOR ACE',
+    badgeColor: 'text-cyan-300 border-cyan-400/40 bg-cyan-950/60',
+  },
+  regularshow: {
+    weeklyChallenge: 'Beat Put the Hurt on Him, Escape from the Moon, and Destroy the Destroyer for 2,500+ points',
+    targetScore: 2500,
+    perk: '3-in-1 Triple Sub-Levels Ready',
+    heroTag: 'REGULAR SHOW 3-IN-1',
+    badgeColor: 'text-amber-300 border-amber-400/40 bg-amber-950/60',
+  },
 };
 
 function getWeekOfYear(): { weekNumber: number; daysRemaining: number } {
@@ -170,21 +191,11 @@ export const FeaturedGameBanner: React.FC<FeaturedGameBannerProps> = ({
       {/* Top Banner Ticker / Status Bar */}
       <div className="relative z-10 flex flex-wrap items-center justify-between border-b border-slate-800/90 bg-slate-950/70 px-4 sm:px-6 py-2.5 text-xs font-mono">
         <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 relative">
-            <span
-              className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-              style={{ backgroundColor: currentGame.accentColor }}
-            />
-            <span
-              className="relative inline-flex rounded-full h-2 w-2"
-              style={{ backgroundColor: currentGame.accentColor }}
-            />
+          <span className="font-retro text-[10px] text-white tracking-wider">
+            FEATURED SPOTLIGHT · WEEK #{weekNumber}
           </span>
-          <div className="flex items-center gap-1.5 font-retro text-[10px] text-white tracking-wider">
-            <span>FEATURED SPOTLIGHT // WEEK #{weekNumber}</span>
-          </div>
-          <span className="hidden md:inline text-slate-500 font-mono text-[11px]">|</span>
-          <span className="hidden md:flex items-center gap-1 text-[11px] text-slate-400">
+          <span className="hidden md:inline text-slate-600" aria-hidden="true">·</span>
+          <span className="hidden md:flex items-center gap-1 text-[11px] text-slate-400 tabular-nums">
             <Clock className="w-3 h-3 text-slate-500" />
             <span>{daysRemaining} DAYS REMAINING</span>
           </span>
@@ -324,7 +335,7 @@ export const FeaturedGameBanner: React.FC<FeaturedGameBannerProps> = ({
               }}
             >
               <Play className="w-4 h-4 fill-current transition-transform group-hover:scale-110" />
-              <span>PLAY NOW // INSERT COIN</span>
+              <span>PLAY NOW</span>
             </button>
 
             <button

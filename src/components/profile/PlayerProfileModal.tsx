@@ -9,8 +9,6 @@ import {
 import { soundManager } from '../../services/audio';
 import {
   X,
-  Sparkles,
-  Palette,
   User,
   Wand2,
   Paintbrush,

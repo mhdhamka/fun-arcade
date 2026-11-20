@@ -59,6 +59,21 @@ export const VirtualController: React.FC<VirtualControllerProps> = ({
     actionBLabel = 'HOLD';
   } else if (gameId === 'snake') {
     actionALabel = 'BOOST';
+  } else if (gameId === 'mario') {
+    actionALabel = 'JUMP';
+    actionBLabel = 'DASH';
+  } else if (gameId === 'angrybirds') {
+    actionALabel = 'LAUNCH';
+    actionBLabel = 'BOOST';
+  } else if (gameId === 'breakout') {
+    actionALabel = 'LASER';
+    actionBLabel = 'LAUNCH';
+  } else if (gameId === 'asteroids') {
+    actionALabel = 'FIRE';
+    actionBLabel = 'WARP';
+  } else if (gameId === 'regularshow') {
+    actionALabel = 'ACT';
+    actionBLabel = 'SPECIAL';
   }
 
   return (

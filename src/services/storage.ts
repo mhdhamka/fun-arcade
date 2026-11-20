@@ -8,6 +8,7 @@ const THEME_KEY = 'arcadejs_theme';
 const SCANLINES_KEY = 'arcadejs_scanlines';
 const SOUND_KEY = 'arcadejs_sound';
 const AMBIENT_SOUND_KEY = 'arcadejs_ambient_sound';
+const MASTER_VOLUME_KEY = 'arcadejs_master_volume';
 const PLAYER_PROFILE_KEY = 'arcadejs_player_profile';
 
 const DEFAULT_HIGH_SCORES: Record<GameId, number> = {
@@ -17,6 +18,9 @@ const DEFAULT_HIGH_SCORES: Record<GameId, number> = {
   invaders: 0,
   mario: 0,
   angrybirds: 0,
+  breakout: 0,
+  asteroids: 0,
+  regularshow: 0,
 };
 
 export interface GlobalLeaderboardEntry {
@@ -122,6 +126,33 @@ const ARCADE_RIVALS: Omit<GlobalLeaderboardEntry, 'rank'>[] = [
     gameId: 'flappy',
     score: 32,
     date: 'AUG 22',
+  },
+  {
+    id: 'rival-11',
+    playerName: 'PRISM_PADDLE',
+    playerTitle: 'Brick Architect',
+    playerAvatar: PRESET_AVATARS[4], // Space Marine
+    gameId: 'breakout',
+    score: 2450,
+    date: 'SEPT 10',
+  },
+  {
+    id: 'rival-12',
+    playerName: 'VECTOR_ACE',
+    playerTitle: 'Starfighter Legend',
+    playerAvatar: PRESET_AVATARS[1], // Cyber Ninja
+    gameId: 'asteroids',
+    score: 3600,
+    date: 'SEPT 12',
+  },
+  {
+    id: 'rival-13',
+    playerName: 'KWON_MASTER',
+    playerTitle: 'Park Champion',
+    playerAvatar: PRESET_AVATARS[7], // Neon Punk
+    gameId: 'regularshow',
+    score: 4200,
+    date: 'SEPT 14',
   },
 ];
 
@@ -351,6 +382,27 @@ export const storageService = {
   setAmbientSoundEnabled(enabled: boolean): void {
     try {
       localStorage.setItem(AMBIENT_SOUND_KEY, String(enabled));
+    } catch {
+      // Fall through
+    }
+  },
+
+  getMasterVolume(): number {
+    try {
+      const val = localStorage.getItem(MASTER_VOLUME_KEY);
+      if (val !== null) {
+        const parsed = parseFloat(val);
+        if (!Number.isNaN(parsed)) return Math.max(0, Math.min(1, parsed));
+      }
+    } catch {
+      // Fall through
+    }
+    return 0.85;
+  },
+
+  setMasterVolume(volume: number): void {
+    try {
+      localStorage.setItem(MASTER_VOLUME_KEY, String(Math.max(0, Math.min(1, volume))));
     } catch {
       // Fall through
     }

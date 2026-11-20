@@ -62,7 +62,7 @@ export const BASE_ACHIEVEMENTS: Omit<Achievement, 'isUnlocked' | 'unlockedAt' | 
   {
     id: 'arcade_polymath',
     title: 'Arcade Polymath',
-    description: 'Play and record a score in all 4 cabinet classics (Snake, Flappy, Tetris, Space Invaders).',
+    description: 'Play and record a score across 6 different arcade cabinets.',
     category: 'mastery',
     accentColor: '#06b6d4', // cyan-500
     badgeBg: 'bg-cyan-950/60',
@@ -128,6 +128,36 @@ export const BASE_ACHIEVEMENTS: Omit<Achievement, 'isUnlocked' | 'unlockedAt' | 
     badgeBg: 'bg-orange-950/60',
     badgeBorder: 'border-orange-500/50',
     iconName: 'Target',
+  },
+  {
+    id: 'brick_breaker_pro',
+    title: 'Brick Architect',
+    description: 'Shatter neon barriers and score 1,200+ points in Neon Breaker.',
+    category: 'mastery',
+    accentColor: '#ec4899', // pink-500
+    badgeBg: 'bg-pink-950/60',
+    badgeBorder: 'border-pink-500/50',
+    iconName: 'Zap',
+  },
+  {
+    id: 'void_ace',
+    title: 'Void Ace',
+    description: 'Blast vector asteroids and alien saucers for 1,500+ points in Astro Blaster.',
+    category: 'mastery',
+    accentColor: '#22d3ee', // cyan-400
+    badgeBg: 'bg-cyan-950/60',
+    badgeBorder: 'border-cyan-400/50',
+    iconName: 'Crosshair',
+  },
+  {
+    id: 'regular_champion',
+    title: 'Park Legend',
+    description: 'Rack up 2,500+ points across Put The Hurt, Moon Escape, or Destroyer Boss.',
+    category: 'mastery',
+    accentColor: '#facc15', // yellow-400
+    badgeBg: 'bg-amber-950/60',
+    badgeBorder: 'border-amber-400/50',
+    iconName: 'Flame',
   },
 ];
 
@@ -244,8 +274,8 @@ class AchievementsEngine {
           break;
         case 'arcade_polymath':
           progress = {
-            current: Math.min(4, gamesPlayed.size),
-            max: 4,
+            current: Math.min(6, gamesPlayed.size),
+            max: 6,
             unit: 'cabinets',
           };
           break;
@@ -288,6 +318,27 @@ class AchievementsEngine {
           progress = {
             current: Math.min(5000, highScores.angrybirds || 0),
             max: 5000,
+            unit: 'pts',
+          };
+          break;
+        case 'brick_breaker_pro':
+          progress = {
+            current: Math.min(1200, highScores.breakout || 0),
+            max: 1200,
+            unit: 'pts',
+          };
+          break;
+        case 'void_ace':
+          progress = {
+            current: Math.min(1500, highScores.asteroids || 0),
+            max: 1500,
+            unit: 'pts',
+          };
+          break;
+        case 'regular_champion':
+          progress = {
+            current: Math.min(2500, highScores.regularshow || 0),
+            max: 2500,
             unit: 'pts',
           };
           break;
@@ -358,7 +409,10 @@ class AchievementsEngine {
       (gameId === 'snake' && sessionScore >= 100) ||
       (gameId === 'flappy' && sessionScore >= 10) ||
       (gameId === 'mario' && sessionScore >= 500) ||
-      (gameId === 'angrybirds' && sessionScore >= 5000)
+      (gameId === 'angrybirds' && sessionScore >= 5000) ||
+      (gameId === 'breakout' && sessionScore >= 600) ||
+      (gameId === 'asteroids' && sessionScore >= 800) ||
+      (gameId === 'regularshow' && sessionScore >= 800)
     ) {
       unlockIfNeeded('first_win');
     }
@@ -380,7 +434,7 @@ class AchievementsEngine {
       unlockIfNeeded('high_roller');
     }
 
-    // 6. Arcade Polymath (played and scored across all 4 games)
+    // 6. Arcade Polymath (played and scored across 6 games)
     const gamesPlayed = new Set<GameId>();
     Object.entries(highScores).forEach(([gid, sc]) => {
       if (sc > 0) gamesPlayed.add(gid as GameId);
@@ -391,7 +445,7 @@ class AchievementsEngine {
     if (sessionScore > 0) {
       gamesPlayed.add(gameId);
     }
-    if (gamesPlayed.size >= 4) {
+    if (gamesPlayed.size >= 6) {
       unlockIfNeeded('arcade_polymath');
     }
 
@@ -424,6 +478,21 @@ class AchievementsEngine {
     const currentAngryBirdsHigh = Math.max(highScores.angrybirds || 0, gameId === 'angrybirds' ? sessionScore : 0);
     if (currentAngryBirdsHigh >= 5000 || (gameId === 'angrybirds' && isGameCompleted)) {
       unlockIfNeeded('pig_destroyer');
+    }
+
+    const currentBreakoutHigh = Math.max(highScores.breakout || 0, gameId === 'breakout' ? sessionScore : 0);
+    if (currentBreakoutHigh >= 1200 || (gameId === 'breakout' && isGameCompleted)) {
+      unlockIfNeeded('brick_breaker_pro');
+    }
+
+    const currentAsteroidsHigh = Math.max(highScores.asteroids || 0, gameId === 'asteroids' ? sessionScore : 0);
+    if (currentAsteroidsHigh >= 1500 || (gameId === 'asteroids' && isGameCompleted)) {
+      unlockIfNeeded('void_ace');
+    }
+
+    const currentRegularHigh = Math.max(highScores.regularshow || 0, gameId === 'regularshow' ? sessionScore : 0);
+    if (currentRegularHigh >= 2500 || (gameId === 'regularshow' && isGameCompleted)) {
+      unlockIfNeeded('regular_champion');
     }
 
     // Trigger celebratory sound if anything unlocked

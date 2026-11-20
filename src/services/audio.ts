@@ -4,6 +4,8 @@ class SoundSynthesizer {
   private ctx: AudioContext | null = null;
   private soundEnabled: boolean = true;
   private ambientSoundEnabled: boolean = true;
+  private masterVolume: number = 0.85;
+  private masterGainNode: GainNode | null = null;
   private isDashboard: boolean = false;
   private ambientRunning: boolean = false;
   private autoResumeAttached: boolean = false;
@@ -64,6 +66,26 @@ class SoundSynthesizer {
 
   public isAmbientPlaying(): boolean {
     return this.ambientRunning;
+  }
+
+  public setMasterVolume(volume: number) {
+    this.masterVolume = Math.max(0, Math.min(1, volume));
+    if (this.masterGainNode && this.ctx) {
+      this.masterGainNode.gain.setTargetAtTime(this.masterVolume, this.ctx.currentTime, 0.02);
+    }
+  }
+
+  public getMasterVolume(): number {
+    return this.masterVolume;
+  }
+
+  private getOutputNode(ctx: AudioContext): AudioNode {
+    if (!this.masterGainNode) {
+      this.masterGainNode = ctx.createGain();
+      this.masterGainNode.gain.setValueAtTime(this.masterVolume, ctx.currentTime);
+      this.masterGainNode.connect(ctx.destination);
+    }
+    return this.masterGainNode;
   }
 
   private initContext(): AudioContext | null {
@@ -152,7 +174,7 @@ class SoundSynthesizer {
       this.ambientMasterGain.gain.setValueAtTime(0.0001, now);
       // Gentle target gain (subtle room presence)
       this.ambientMasterGain.gain.exponentialRampToValueAtTime(0.24, now + 1.2);
-      this.ambientMasterGain.connect(ctx.destination);
+      this.ambientMasterGain.connect(this.getOutputNode(ctx));
 
       // 2. Faint Cabinet Power Hum (60Hz CRT transformer mains resonance)
       this.humFilter = ctx.createBiquadFilter();
@@ -474,7 +496,7 @@ class SoundSynthesizer {
           gain1.gain.setValueAtTime(0.16, now);
           gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
           osc1.connect(gain1);
-          gain1.connect(ctx.destination);
+          gain1.connect(this.getOutputNode(ctx));
           osc1.start(now);
           osc1.stop(now + 0.12);
 
@@ -485,7 +507,7 @@ class SoundSynthesizer {
           gain2.gain.setValueAtTime(0.14, now + 0.04);
           gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
           osc2.connect(gain2);
-          gain2.connect(ctx.destination);
+          gain2.connect(this.getOutputNode(ctx));
           osc2.start(now + 0.04);
           osc2.stop(now + 0.18);
           break;
@@ -505,7 +527,7 @@ class SoundSynthesizer {
           gain.gain.setValueAtTime(0.08, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(this.getOutputNode(ctx));
           osc.start(now);
           osc.stop(now + 0.08);
           break;
@@ -522,7 +544,7 @@ class SoundSynthesizer {
           gain.gain.setValueAtTime(0.15, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(this.getOutputNode(ctx));
           osc.start(now);
           osc.stop(now + 0.45);
           break;
@@ -537,7 +559,7 @@ class SoundSynthesizer {
           gain.gain.setValueAtTime(0.12, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(this.getOutputNode(ctx));
           osc.start(now);
           osc.stop(now + 0.25);
           break;
@@ -552,7 +574,7 @@ class SoundSynthesizer {
           gain.gain.setValueAtTime(0.12, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(this.getOutputNode(ctx));
           osc.start(now);
           osc.stop(now + 0.14);
           break;
@@ -567,7 +589,7 @@ class SoundSynthesizer {
           gain.gain.setValueAtTime(0.12, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(this.getOutputNode(ctx));
           osc.start(now);
           osc.stop(now + 0.12);
           break;
@@ -594,7 +616,7 @@ class SoundSynthesizer {
 
           noise.connect(filter);
           filter.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(this.getOutputNode(ctx));
           noise.start(now);
           break;
         }
@@ -610,7 +632,7 @@ class SoundSynthesizer {
           gain.gain.setValueAtTime(0.15, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(this.getOutputNode(ctx));
           osc.start(now);
           osc.stop(now + 0.65);
           break;
@@ -627,7 +649,7 @@ class SoundSynthesizer {
             noteGain.gain.setValueAtTime(0.12, t);
             noteGain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
             noteOsc.connect(noteGain);
-            noteGain.connect(ctx.destination);
+            noteGain.connect(this.getOutputNode(ctx));
             noteOsc.start(t);
             noteOsc.stop(t + 0.14);
           });
@@ -644,7 +666,7 @@ class SoundSynthesizer {
           gain.gain.setValueAtTime(0.12, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(this.getOutputNode(ctx));
           osc.start(now);
           osc.stop(now + 0.28);
           break;
@@ -659,7 +681,7 @@ class SoundSynthesizer {
           gain.gain.setValueAtTime(0.1, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
           osc.connect(gain);
-          gain.connect(ctx.destination);
+          gain.connect(this.getOutputNode(ctx));
           osc.start(now);
           osc.stop(now + 0.16);
           break;
@@ -684,7 +706,7 @@ class SoundSynthesizer {
             gain.gain.setValueAtTime(0.18, t);
             gain.gain.exponentialRampToValueAtTime(0.001, t + note.d);
             osc.connect(gain);
-            gain.connect(ctx.destination);
+            gain.connect(this.getOutputNode(ctx));
             osc.start(t);
             osc.stop(t + note.d);
             offset += note.d * 0.85;

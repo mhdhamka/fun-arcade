@@ -17,6 +17,8 @@ import { AchievementToast } from './components/common/AchievementToast';
 import { PlayerProfileModal } from './components/profile/PlayerProfileModal';
 import { CabinetCustomizerModal } from './components/cabinet/CabinetCustomizerModal';
 import { SettingsModal, SettingsTab } from './components/settings/SettingsModal';
+import { ConfirmDialog } from './components/common/ConfirmDialog';
+import { ArcadeReadmeModal } from './components/common/ArcadeReadmeModal';
 import { achievementsEngine } from './services/achievements';
 
 export default function App() {
@@ -27,6 +29,7 @@ export default function App() {
   const [ambientSoundEnabled, setAmbientSoundEnabled] = useState<boolean>(() =>
     storageService.getAmbientSoundEnabled()
   );
+  const [masterVolume, setMasterVolume] = useState<number>(() => storageService.getMasterVolume());
   const [highScores, setHighScores] = useState<Record<GameId, number>>(() =>
     storageService.getHighScores()
   );
@@ -41,6 +44,8 @@ export default function App() {
   const [isCabinetCustomizerOpen, setIsCabinetCustomizerOpen] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [settingsTab, setSettingsTab] = useState<SettingsTab>('cabinet');
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState<boolean>(false);
+  const [isReadmeOpen, setIsReadmeOpen] = useState<boolean>(false);
 
   // Sync sound manager with sound state
   useEffect(() => {
@@ -51,6 +56,11 @@ export default function App() {
   useEffect(() => {
     soundManager.setAmbientSoundEnabled(ambientSoundEnabled);
   }, [ambientSoundEnabled]);
+
+  // Sync sound manager with master volume
+  useEffect(() => {
+    soundManager.setMasterVolume(masterVolume);
+  }, [masterVolume]);
 
   // Activate ambient arcade noise (cabinet hums, coin jingles) when user is on dashboard
   useEffect(() => {
@@ -75,6 +85,12 @@ export default function App() {
     storageService.setAmbientSoundEnabled(next);
     soundManager.setAmbientSoundEnabled(next);
     if (next) soundManager.play('coin');
+  };
+
+  const handleMasterVolumeChange = (vol: number) => {
+    setMasterVolume(vol);
+    storageService.setMasterVolume(vol);
+    soundManager.setMasterVolume(vol);
   };
 
   const handleToggleScanlines = () => {
@@ -105,13 +121,16 @@ export default function App() {
   };
 
   const handleClearHistory = () => {
-    if (window.confirm('Reset all high scores, achievements, and gameplay history records?')) {
-      storageService.clearHistory();
-      achievementsEngine.resetAchievements();
-      setHighScores(storageService.getHighScores());
-      setHistory([]);
-      soundManager.play('hit');
-    }
+    setIsClearConfirmOpen(true);
+  };
+
+  const executeClearHistory = () => {
+    storageService.clearHistory();
+    achievementsEngine.resetAchievements();
+    setHighScores(storageService.getHighScores());
+    setHistory([]);
+    setIsClearConfirmOpen(false);
+    soundManager.play('hit');
   };
 
   const handleScrollToLeaderboards = () => {
@@ -183,7 +202,30 @@ export default function App() {
         onToggleSound={handleToggleSound}
         ambientSoundEnabled={ambientSoundEnabled}
         onToggleAmbient={handleToggleAmbientSound}
+        masterVolume={masterVolume}
+        onMasterVolumeChange={handleMasterVolumeChange}
         onClearData={handleClearHistory}
+      />
+
+      <ConfirmDialog
+        isOpen={isClearConfirmOpen}
+        title="RESET ARCADE RECORDS"
+        message="This will permanently clear all local high scores, unlocked achievement badges, and gameplay session history."
+        confirmLabel="RESET ALL"
+        cancelLabel="KEEP RECORDS"
+        onConfirm={executeClearHistory}
+        onCancel={() => setIsClearConfirmOpen(false)}
+      />
+
+      {/* Interactive Operator Manual / Arcade README Modal */}
+      <ArcadeReadmeModal
+        isOpen={isReadmeOpen}
+        onClose={() => setIsReadmeOpen(false)}
+        highScores={highScores}
+        onLaunchGame={(game) => {
+          setIsReadmeOpen(false);
+          handleLaunchGame(game);
+        }}
       />
 
       {/* If playing in Arcade Cabinet, show cabinet view */}
@@ -197,7 +239,7 @@ export default function App() {
           onToggleSound={handleToggleSound}
           cabinetConfig={cabinetConfig}
           onOpenCabinetCustomizer={() => handleOpenSettings('cabinet')}
-          onOpenSettings={() => handleOpenSettings('cabinet')}
+          onOpenSettings={() => handleOpenSettings('audio')}
         />
       ) : (
         /* Otherwise show Launcher Dashboard with Hub Navbar */
@@ -215,7 +257,8 @@ export default function App() {
             profile={playerProfile}
             onOpenProfile={() => setIsProfileModalOpen(true)}
             onOpenCabinetCustomizer={() => handleOpenSettings('cabinet')}
-            onOpenSettings={() => handleOpenSettings('cabinet')}
+            onOpenSettings={() => handleOpenSettings('audio')}
+            onOpenReadme={() => setIsReadmeOpen(true)}
           />
 
           <main className="flex-1">
@@ -227,7 +270,8 @@ export default function App() {
               profile={playerProfile}
               onOpenProfileModal={() => setIsProfileModalOpen(true)}
               onOpenCabinetCustomizer={() => handleOpenSettings('cabinet')}
-              onOpenSettings={() => handleOpenSettings('cabinet')}
+              onOpenSettings={() => handleOpenSettings('audio')}
+              onOpenReadme={() => setIsReadmeOpen(true)}
             />
           </main>
 
@@ -237,15 +281,15 @@ export default function App() {
 
             <div className="max-w-6xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
               
-              {/* Left Branding & Live Status */}
+              {/* Left Branding & Platform Info */}
               <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
-                <div className="flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-cyan-400 font-retro text-[10px] shadow-[0_0_12px_rgba(6,182,212,0.15)]">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>SYSTEM ONLINE</span>
+                <div className="flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-cyan-400 font-retro text-[10px]">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span>READY TO PLAY</span>
                 </div>
                 <div>
-                  <span className="font-retro text-[11px] text-white tracking-wider">ARCADE<span className="text-cyan-400">JS</span></span>
-                  <span className="text-slate-500 ml-2">// MODULAR RETRO PLATFORM v1.0</span>
+                  <span className="font-retro text-[11px] text-white tracking-wider">FUN <span className="text-cyan-400">ARCADE</span></span>
+                  <span className="text-slate-500 ml-2">MODULAR RETRO PLATFORM v1.1</span>
                 </div>
               </div>
 
